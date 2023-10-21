@@ -1,0 +1,6 @@
+name: NoChatReports
+version: '${version}'
+main: dev.drtheo.npr.NoChatReports
+api-version: '1.18'
+softdepend:
+  - DiscordSRV
