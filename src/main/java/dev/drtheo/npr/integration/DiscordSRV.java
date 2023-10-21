@@ -11,7 +11,6 @@ public class DiscordSRV extends Hook {
 
     @Override
     public void onProcessed(AsyncPlayerChatEvent event) {
-        System.out.println(event);
         Bukkit.getScheduler().runTaskAsynchronously(github.scarsz.discordsrv.DiscordSRV.getPlugin(), () ->
                 github.scarsz.discordsrv.DiscordSRV.getPlugin().processChatMessage(
                         event.getPlayer(),
