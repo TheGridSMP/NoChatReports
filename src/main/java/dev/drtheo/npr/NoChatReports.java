@@ -1,8 +1,7 @@
 package dev.drtheo.npr;
 
-import dev.drtheo.npr.integration.DiscordSRV;
+import dev.drtheo.npr.integration.DiscordSRVHook;
 import dev.drtheo.npr.integration.Hook;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -15,14 +14,14 @@ import java.util.Set;
 
 public final class NoChatReports extends JavaPlugin implements Listener {
 
-    private final Set<Hook> hooks = new HashSet<>();
+    private final Set<Hook<?>> hooks = new HashSet<>();
 
     @Override
     public void onEnable() {
         this.getServer().getPluginManager().registerEvents(this, this);
 
         if (this.getServer().getPluginManager().isPluginEnabled("DiscordSRV")) {
-            hooks.add(new DiscordSRV());
+            this.hooks.add(new DiscordSRVHook(this));
         }
     }
 
@@ -44,18 +43,17 @@ public final class NoChatReports extends JavaPlugin implements Listener {
                 event.getFormat(), sender.getDisplayName(), event.getMessage()
         );
 
-        Bukkit.getConsoleSender().sendMessage(consoleMessage);
-
+        this.getLogger().info(consoleMessage);
         for (Player player : event.getRecipients()) {
             player.sendMessage(sender.getUniqueId(), publicMessage);
         }
 
-        for (Hook hook : this.hooks) {
-            hook.onProcessed(event);
+        for (Hook<?> hook : this.hooks) {
+            hook.onMessage(event);
         }
 
         event.setCancelled(true);
-        Bukkit.getServer().getPluginManager().callEvent(
+        this.getServer().getPluginManager().callEvent(
                 new AsyncPlayerChatEvent(true, sender, event.getMessage(), Set.of())
         );
     }
